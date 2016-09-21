@@ -21,7 +21,7 @@ import org.jsoup.nodes.Document;
 
 import java.io.File;
 import java.io.IOException;
-import java.time.Instant;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Properties;
 
@@ -40,24 +40,21 @@ public class FileHelper {
 	}
 
 	public Document getCompareDocument(String baseProperty) throws IOException {
-		return Jsoup
-			.connect(properties.getProperty(baseProperty + ".projectId")
-				+ File.pathSeparator
-				+ COMPARE_FILE).get();
+		return Jsoup.parse(getCompareFile(baseProperty), null);
 	}
 
 	public void moveToArchive(File fileOldDocument, File fileOldDocumentArchive) throws IOException {
 		FileUtils.copyFile(fileOldDocument, fileOldDocumentArchive);
 	}
 
-	public File getCompareFile(String base) {
-		return new File(base + File.pathSeparator + COMPARE_FILE);
+	public File getCompareFile(String baseProperty) {
+		return new File(properties.getProperty(baseProperty + ".projectId") + File.separator + COMPARE_FILE);
 	}
 
-	public File getArchiveFile(String base) {
-		String dateTime = DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(Instant.now());
+	public File getArchiveFile(String baseProperty) {
+		String dateTime = DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(LocalDateTime.now());
 
-		return new File(base + File.pathSeparator + dateTime + ".html");
+		return new File(properties.getProperty(baseProperty + ".projectId") + File.separator + dateTime + ".html");
 	}
 
 }
