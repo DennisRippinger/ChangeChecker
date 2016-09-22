@@ -15,9 +15,55 @@
  */
 package de.drippinger.changeChecker;
 
-/**
- * PageCheckerTest
- */
+import org.jsoup.Jsoup;
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.Properties;
+
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.when;
+
+@RunWith(MockitoJUnitRunner.class)
 public class PageCheckerTest {
 
+	private static final String BASE_STRING = "testProject";
+
+	@Rule
+	public TemporaryFolder temporaryFolder = new TemporaryFolder();
+
+	@Mock
+	private FileHelper fileHelper;
+
+	private Properties properties;
+
+	private PageChecker pageChecker;
+
+	@Before
+	public void setUp() throws IOException {
+		properties = new Properties();
+		properties.put(BASE_STRING + ".cssSelector", "tbody tr th:nth-child(2)");
+
+		File fileTableA = new File(this.getClass().getResource("/Table_A.html").getFile());
+		File fileTableB = new File(this.getClass().getResource("/Table_B.html").getFile());
+
+		when(fileHelper.getCompareDocument(any())).thenReturn(Jsoup.parse(fileTableA, null));
+		when(fileHelper.getCurrentDocument(any())).thenReturn(Jsoup.parse(fileTableB, null));
+		when(fileHelper.getCompareFile(any())).thenReturn(temporaryFolder.newFile("compare_file.html"));
+
+		pageChecker = new PageChecker(fileHelper, properties);
+	}
+
+	@Test
+	public void test_checkPage() throws Exception {
+		pageChecker.checkPage(BASE_STRING);
+
+	}
 }

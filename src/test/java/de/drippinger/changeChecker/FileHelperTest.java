@@ -39,7 +39,6 @@ public class FileHelperTest {
 
 	private FileHelper fileHelper;
 
-
 	@Rule
 	public TemporaryFolder temporaryFolder = new TemporaryFolder();
 
